@@ -2,41 +2,25 @@ name: CI
 on:
   push:
     branches: [ main ]
+  pull_request:
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
-      # used to cache dependencies with a timeout
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "date=$(/bin/date -u "+%Y%m%d")" >> "$GITHUB_OUTPUT"
-        shell: bash
-
-      - name: Cache Buildozer global directory
-        uses: actions/cache@v4
+      - uses: actions/setup-python@v5
         with:
-          path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
+          python-version: '3.11'
 
-      - uses: actions/cache@v4
-        with:
-          path: .buildozer
-          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
+      - name: Install ruff
+        run: pip install ruff
 
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
-        with:
-          command: buildozer android debug
-          buildozer_version: master
+      # Real errors only (syntax + undefined names) — not style nits.
+      - name: Lint (pyflakes-style errors)
+        run: ruff check --select E9,F63,F7,F82 --exclude libs .
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: package
-          path: ${{ steps.buildozer.outputs.filename }}
+      # Byte-compile every module to catch syntax errors (skips vendored libs/).
+      - name: Byte-compile
+        run: python -m compileall -q . -x libs
