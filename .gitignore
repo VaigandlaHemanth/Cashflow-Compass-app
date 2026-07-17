@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# SQLite databases (created at runtime by the app)
+*.db
+*.sqlite
+*.sqlite3
+
+# Buildozer / Android build artifacts
+.buildozer/
+bin/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

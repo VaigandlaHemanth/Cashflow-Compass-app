@@ -1,0 +1,7 @@
+# Cashflow Compass — Kivy/KivyMD personal finance app
+# Python >= 3.9
+kivy>=2.1
+kivymd>=1.1
+matplotlib
+kivy-garden
+# The kivy-garden matplotlib backend is vendored under libs/garden/.

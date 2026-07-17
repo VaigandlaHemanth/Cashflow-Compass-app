@@ -143,10 +143,13 @@ class RecordScreen(BoxLayout):
                 # Insert the transaction and print all transactions
                 viewsqlite.insert_transaction(conn, list_finance)
                 viewsqlite.select_all_transactions(conn)
+                print("Transaction saved to database.")
             except ValueError as ve:
                 print(f"Error saving transaction: {ve}")
             except Exception as e:
-                print(f"Saved to database")
+                # Previously this printed "Saved to database" on ANY failure,
+                # reporting errors as success. Surface the real error instead.
+                print(f"Failed to save transaction: {e}")
             finally:
                 # Ensure the database connection is closed after the operation
                 conn.close()
